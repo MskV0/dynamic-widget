@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clock Widget</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="widget-wrapper">
+    <button class="close" onclick="window.close()">✖</button>
+
+    <div class="clock-container">
+      <div class="clock">
+        <span id="hours" class="hours">--</span>
+        <span class="separator">:</span>
+        <span id="minutes" class="minutes">--</span>
+        <span class="separator">:</span>
+        <span id="seconds" class="seconds">--</span>
+        <span class="ampm" id="ampm">AM</span>
+      </div>
+      <div class="day-date">
+        <span id="day">Loading...</span>, <span id="date">Loading...</span>
+      </div>
+      <div class="weather" id="weather">Loading weather...</div>
+    </div>
+
+    <!-- Resize handles -->
+    <div class="resize-handle resize-top"></div>
+    <div class="resize-handle resize-right"></div>
+    <div class="resize-handle resize-bottom"></div>
+    <div class="resize-handle resize-left"></div>
+    <div class="resize-handle resize-tl"></div>
+    <div class="resize-handle resize-tr"></div>
+    <div class="resize-handle resize-bl"></div>
+    <div class="resize-handle resize-br"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

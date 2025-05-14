@@ -1,0 +1,577 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+:root {
+  --hours-color: #ff00ff;     /* Magenta */
+  --minutes-color: #00ffff;   /* Cyan */
+  --seconds-color: #ffff00;   /* Yellow */
+  --day-color: #00ff00;       /* Green */
+  --date-color: #ff9500;      /* Orange */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  font-family: 'Orbitron', sans-serif;
+  user-select: none;
+  -webkit-app-region: drag;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.widget-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.clock-container {
+  max-width: 90vw;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 1;
+}
+
+.clock {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  display: flex;
+  align-items: flex-end;
+}
+
+/* Hours styling */
+.hours {
+  color: var(--hours-color);
+  text-shadow: 0 0 10px var(--hours-color), 0 0 20px var(--hours-color);
+}
+
+/* Minutes styling */
+.minutes {
+  color: var(--minutes-color);
+  text-shadow: 0 0 10px var(--minutes-color), 0 0 20px var(--minutes-color);
+}
+
+/* Seconds styling */
+.seconds {
+  color: var(--seconds-color);
+  text-shadow: 0 0 10px var(--seconds-color), 0 0 20px var(--seconds-color);
+}
+
+/* Separator styling */
+.separator {
+  color: white;
+  text-shadow: 0 0 10px white, 0 0 20px white;
+  margin: 0 2px;
+}
+
+.ampm {
+  font-size: 0.8rem;
+  margin-left: 6px;
+  opacity: 0.8;
+  color: white;
+  text-shadow: 0 0 5px white, 0 0 10px white;
+}
+
+.day-date {
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+}
+
+/* Day styling */
+#day {
+  color: var(--day-color);
+  text-shadow: 0 0 6px var(--day-color), 0 0 12px var(--day-color);
+}
+
+/* Date styling */
+#date {
+  color: var(--date-color);
+  text-shadow: 0 0 6px var(--date-color), 0 0 12px var(--date-color);
+}
+
+.weather {
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  text-shadow: 0 0 5px var(--minutes-color), 0 0 10px var(--minutes-color);
+  color: var(--minutes-color);
+  margin-top: 5px;
+}
+
+/* Close button styles */
+button.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+  text-shadow: 0 0 5px white;
+  -webkit-app-region: no-drag;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1010;
+}
+
+button.close:hover {
+  background: white;
+  color: black;
+}
+
+/* Weather-specific styles */
+.weather-clear {
+  color: #f5e342;
+  text-shadow: 0 0 5px #f5e342, 0 0 10px #f5e342;
+}
+
+.weather-clouds {
+  color: #cccccc;
+  text-shadow: 0 0 5px #cccccc, 0 0 10px #cccccc;
+}
+
+.weather-rain {
+  color: #4fc3f7;
+  text-shadow: 0 0 5px #4fc3f7, 0 0 10px #4fc3f7;
+}
+
+.weather-snow {
+  color: #ffffff;
+  text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff;
+}
+
+.weather-thunderstorm {
+  color: #ff9100;
+  text-shadow: 0 0 5px #ff9100, 0 0 10px #ff9100;
+}
+
+.weather-haze {
+  color: #b0bec5;
+  text-shadow: 0 0 5px #b0bec5, 0 0 10px #b0bec5;
+}
+
+.weather-error {
+  color: red;
+  text-shadow: 0 0 5px red, 0 0 10px red;
+}
+
+/* Resize handles */
+.resize-handle {
+  position: absolute;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  -webkit-app-region: no-drag;
+}
+
+.resize-top, .resize-bottom {
+  height: 8px;
+  left: 0;
+  right: 0;
+  cursor: ns-resize;
+  background-color: rgba(0, 255, 255, 0.3);
+}
+
+.resize-left, .resize-right {
+  width: 8px;
+  top: 0;
+  bottom: 0;
+  cursor: ew-resize;
+  background-color: rgba(0, 255, 255, 0.3);
+}
+
+.resize-top { top: 0; }
+.resize-bottom { bottom: 0; }
+.resize-left { left: 0; }
+.resize-right { right: 0; }
+
+.resize-tl, .resize-tr, .resize-bl, .resize-br {
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  background-color: rgba(0, 255, 255, 0.4);
+}
+
+.resize-tl {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+}
+.resize-tr {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+}
+.resize-bl {
+  bottom: 0;
+  left: 0;
+  cursor: nesw-resize;
+}
+.resize-br {
+  bottom: 0;
+  right: 0;
+  cursor: nwse-resize;
+}
+
+/* Important hover effects */
+.widget-wrapper:hover .close {
+  opacity: 1;
+}
+
+.widget-wrapper:hover .resize-handle {
+  opacity: 1;
+}date {
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  text-shadow: 0 0 6px var(--glow), 0 0 12px var(--glow);
+}
+
+.weather {
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  text-shadow: 0 0 5px var(--glow), 0 0 10px var(--glow);
+}
+
+/* Close button styles */
+button.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+  text-shadow: 0 0 5px var(--glow);
+  -webkit-app-region: no-drag;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1010;
+}
+
+button.close:hover {
+  background: var(--glow);
+  color: black;
+}
+
+/* Weather-specific styles */
+.weather-clear {
+  color: #f5e342;
+  text-shadow: 0 0 5px #f5e342, 0 0 10px #f5e342;
+}
+
+.weather-clouds {
+  color: #cccccc;
+  text-shadow: 0 0 5px #cccccc, 0 0 10px #cccccc;
+}
+
+.weather-rain {
+  color: #4fc3f7;
+  text-shadow: 0 0 5px #4fc3f7, 0 0 10px #4fc3f7;
+}
+
+.weather-snow {
+  color: #ffffff;
+  text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff;
+}
+
+.weather-thunderstorm {
+  color: #ff9100;
+  text-shadow: 0 0 5px #ff9100, 0 0 10px #ff9100;
+}
+
+.weather-haze {
+  color: #b0bec5;
+  text-shadow: 0 0 5px #b0bec5, 0 0 10px #b0bec5;
+}
+
+.weather-error {
+  color: red;
+  text-shadow: 0 0 5px red, 0 0 10px red;
+}
+
+/* Resize handles */
+.resize-handle {
+  position: absolute;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  -webkit-app-region: no-drag;
+}
+
+.resize-top, .resize-bottom {
+  height: 8px;
+  left: 0;
+  right: 0;
+  cursor: ns-resize;
+  background-color: rgba(0, 255, 255, 0.3);
+}
+
+.resize-left, .resize-right {
+  width: 8px;
+  top: 0;
+  bottom: 0;
+  cursor: ew-resize;
+  background-color: rgba(0, 255, 255, 0.3);
+}
+
+.resize-top { top: 0; }
+.resize-bottom { bottom: 0; }
+.resize-left { left: 0; }
+.resize-right { right: 0; }
+
+.resize-tl, .resize-tr, .resize-bl, .resize-br {
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  background-color: rgba(0, 255, 255, 0.4);
+}
+
+.resize-tl {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+}
+.resize-tr {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+}
+.resize-bl {
+  bottom: 0;
+  left: 0;
+  cursor: nesw-resize;
+}
+.resize-br {
+  bottom: 0;
+  right: 0;
+  cursor: nwse-resize;
+}
+
+/* Important hover effects */
+.widget-wrapper:hover .close {
+  opacity: 1;
+}
+
+.widget-wrapper:hover .resize-handle {
+  opacity: 1;
+}
+
+/* For debugging */
+/*
+.resize-handle {
+  background-color: rgba(255, 0, 0, 0.3);
+  opacity: 0.5;
+}
+*/@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+:root {
+  --glow: #00ffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  font-family: 'Orbitron', sans-serif;
+  user-select: none;
+  -webkit-app-region: drag;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--glow);
+  text-align: center;
+}
+
+.widget-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.clock-container {
+  max-width: 90vw;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.clock {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  text-shadow: 0 0 10px var(--glow), 0 0 20px var(--glow);
+  display: flex;
+  align-items: flex-end;
+}
+
+.ampm {
+  font-size: 0.8rem;
+  margin-left: 6px;
+  opacity: 0.8;
+}
+
+.day-date {
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  text-shadow: 0 0 6px var(--glow), 0 0 12px var(--glow);
+}
+
+.weather {
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  text-shadow: 0 0 5px var(--glow), 0 0 10px var(--glow);
+}
+
+button.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+  text-shadow: 0 0 5px var(--glow);
+  -webkit-app-region: no-drag;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+button.close:hover {
+  background: var(--glow);
+  color: black;
+}
+
+/* Weather-specific styles */
+.weather-clear {
+  color: #f5e342;
+  text-shadow: 0 0 5px #f5e342, 0 0 10px #f5e342;
+}
+
+.weather-clouds {
+  color: #cccccc;
+  text-shadow: 0 0 5px #cccccc, 0 0 10px #cccccc;
+}
+
+.weather-rain {
+  color: #4fc3f7;
+  text-shadow: 0 0 5px #4fc3f7, 0 0 10px #4fc3f7;
+}
+
+.weather-snow {
+  color: #ffffff;
+  text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff;
+}
+
+.weather-thunderstorm {
+  color: #ff9100;
+  text-shadow: 0 0 5px #ff9100, 0 0 10px #ff9100;
+}
+
+.weather-haze {
+  color: #b0bec5;
+  text-shadow: 0 0 5px #b0bec5, 0 0 10px #b0bec5;
+}
+
+.weather-error {
+  color: red;
+  text-shadow: 0 0 5px red, 0 0 10px red;
+}
+
+/* Resize handles */
+.resize-handle {
+  position: absolute;
+  z-index: 1000;
+  background: rgba(0, 255, 255, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.resize-top, .resize-bottom {
+  height: 6px;
+  left: 0;
+  right: 0;
+  cursor: ns-resize;
+}
+
+.resize-left, .resize-right {
+  width: 6px;
+  top: 0;
+  bottom: 0;
+  cursor: ew-resize;
+}
+
+.resize-top { top: 0; }
+.resize-bottom { bottom: 0; }
+.resize-left { left: 0; }
+.resize-right { right: 0; }
+
+.resize-tl, .resize-tr, .resize-bl, .resize-br {
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  background: rgba(0, 255, 255, 0.15);
+}
+
+.resize-tl {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+}
+.resize-tr {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+}
+.resize-bl {
+  bottom: 0;
+  left: 0;
+  cursor: nesw-resize;
+}
+.resize-br {
+  bottom: 0;
+  right: 0;
+  cursor: nwse-resize;
+}
+
+/* This ensures controls appear on hover and remain clickable */
+.widget-wrapper:hover .close,
+.widget-wrapper:hover .resize-handle {
+  opacity: 1;
+  pointer-events: auto;
+}
