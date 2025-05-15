@@ -29,27 +29,36 @@ function updateDayAndDate() {
 function updateWeather() {
   const weatherDiv = document.getElementById('weather');
 
-  // Fetch weather using IP/location
-  fetch('https://wttr.in/?format=j1')
-    .then(res => res.json())
-    .then(data => {
-      const current = data.current_condition[0];
-      const temp = current.temp_C;
-      const desc = current.weatherDesc[0].value;
+  if (!navigator.geolocation) {
+    weatherDiv.innerText = 'Geolocation not supported by your browser.';
+    return;
+  }
 
-      // Set weather text
-      weatherDiv.textContent = `${desc}, ${temp}°C`;
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
 
-      // Apply weather-specific class
-      weatherDiv.className = 'weather';
-      const weatherClass = desc.toLowerCase().split(' ')[0]; // e.g., "sunny"
-      weatherDiv.classList.add(`weather-${weatherClass}`);
-    })
-    .catch(err => {
-      weatherDiv.textContent = 'Weather unavailable';
-      weatherDiv.className = 'weather weather-error';
-      console.error('Weather fetch failed:', err);
-    });
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          const temperature = data.current_weather.temperature;
+          const windspeed = data.current_weather.windspeed;
+          const weatherCode = data.current_weather.weathercode;
+
+          weatherDiv.innerText = `${temperature}°C, Wind ${windspeed} km/h`;
+        })
+        .catch(error => {
+          console.error('Error fetching weather data:', error);
+          weatherDiv.innerText = 'Unable to fetch weather data.';
+        });
+    },
+    () => {
+      weatherDiv.innerText = 'Location permission denied.';
+    }
+  );
 }
 
 // Make sure resize handles are draggable and actually work
